@@ -1,6 +1,6 @@
-<?PHP
+<?php
 /*
- * Plugin Name: WooCommerce Test Gateway
+ * Plugin Name: WooCommerce Gateway Test
  * Plugin URI: https://github.com/shopplugins/woocommerce-gateway-test
  * Description: A simple gateway to test transactions with WooCommerce
  * Version: 0.1.0
@@ -13,16 +13,16 @@
  *
  * Copyright Shop Plugins (support@shopplugins.com)
  *
- *     This file is part of WooCommerce Test Gateway,
+ *     This file is part of WooCommerce Gateway Test,
  *     a plugin for WordPress.
  *
- *     WooCommerce Test Gateway is free software:
+ *     WooCommerce Gateway Test is free software:
  *     You can redistribute it and/or modify it under the terms of the
  *     GNU General Public License as published by the Free Software
  *     Foundation, either version 3 of the License, or (at your option)
  *     any later version.
  *
- *     WooCommerce Test Gateway is distributed in the hope that
+ *     WooCommerce Gateway Test is distributed in the hope that
  *     it will be useful, but WITHOUT ANY WARRANTY; without even the
  *     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
  *     PURPOSE. See the GNU General Public License for more details.
@@ -47,7 +47,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package  WooCommerce Gateway Test
  */
 
-class WC_Gateway_Test {
+class WooCommerce_Gateway_Test {
 
 	protected static $instance = null;
 
@@ -58,6 +58,8 @@ class WC_Gateway_Test {
 
 		if ( class_exists( 'WooCommerce' ) ) {
 
+			add_action( 'plugins_loaded', array( $this, 'init' ), 0 );
+
 		} else {
 
 			add_action( 'admin_notices', array( $this, 'woocommerce_missing_notice' ) );
@@ -67,9 +69,25 @@ class WC_Gateway_Test {
 	}
 
 	/**
+	 * Init al the things
+	 */
+	public function init(){
+		if ( ! class_exists( 'WC_Payment_Gateway' ) ) {
+			return;
+		}
+
+		// Includes
+		include_once( 'includes/class-wc-gateway-test.php' );
+
+		// Localisation
+		load_plugin_textdomain( 'woocommerce-gateway-test', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+
+	}
+
+	/**
 	 * Start the Class when called
 	 *
-	 * @return WC_Gateway_Test
+	 * @return WooCommerce_Gateway_Test
 	 */
 	public static function get_instance() {
 		// If the single instance hasn't been set, set it now.
@@ -93,4 +111,4 @@ class WC_Gateway_Test {
 }
 
 
-add_action( 'plugins_loaded', array( 'WC_Gateway_Test', 'get_instance' ) );
+add_action( 'plugins_loaded', array( 'WooCommerce_Gateway_Test', 'get_instance' ) );
